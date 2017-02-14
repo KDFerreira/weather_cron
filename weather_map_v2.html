@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>grewpwork</title>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    
+    
+    
+    
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjcVFCNlr9p6qdKiFCR0O65uty5cs8cGs&sensor=false">
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    
+    
+    <script type="text/javascript">
+      var infowindow = new google.maps.InfoWindow();
+      
+      function initialize() {
+        var mapOptions = {
+          center: new google.maps.LatLng(13.7, -10.42),
+          zoom: 2
+        };
+        var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        
+        
+        $.getJSON('getCities.php', null, pResponse);
+        
+        function pResponse(data) {
+          
+          //alert('hello');
+          //loop through all of the city items
+          $.each(data,function(i, content) {
+              //console.log('city = ' + data[i].city);
+              //console.log('lat = ' + data[i].lat);
+              //console.log('lng = ' + data[i].lng);
+              //console.log('num = ' + data[i].num);
+              
+              var myLatlng = new google.maps.LatLng(data[i].lat, data[i].lng);
+              
+              var iwContent = '<h2>' + data[i].city + '</h2>' +
+                              '<p>Number of requests: ' + data[i].num + '</p>';
+              
+              var title = data[i].city;
+                              
+              createMarker(myLatlng ,title,iwContent);
+              
+              
+          });// end of each
+        }; //end of pResponse
+        
+        function createMarker(myLatlng,title,iwContent) {
+          var marker = new google.maps.Marker({
+              position: myLatlng,
+              map: map,
+              animation: google.maps.Animation.DROP,
+              title: title
+          });
+          
+          google.maps.event.addListener(marker, 'click', function () {
+            infowindow.setContent(iwContent);
+            infowindow.open(map, marker);
+            });
+          
+        }//end of createMarker
+        
+        
+        
+      }//end of initialize
+      google.maps.event.addDomListener(window, 'load', initialize);
+      
+      
+      
+    </script>
+    
+    
+    
+  </head>
+  <body>
+    <div id="map-canvas" style="width: 1000px; height: 800px;"></div>
+  </body>
+</html>
